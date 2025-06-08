@@ -1,90 +1,211 @@
-<!-- templates/app_usuarios/registro.html -->
 {% extends 'gt_store/base_general.html' %}
 {% load static %}
+
 {% block contenido %}
-<div class="container-fluid pt-5">
-    <div class="row justify-content-center align-items-center">
-        <div class="col-md-4">
-            <div class="p-5 rounded-5 text-secondary shadow">
-                <div class="text-start fs-3 fw-bold mb-4">Registro de usuarios</div>
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="nombre" class="fs-5 pb-1 fw-semibold">Nombre</label>
-                        <div class="input-group mt-1">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-person text-white"></i>
-                            </div>
-                            {{ form.nombre }}
-                        </div>
-                        <div class="text-danger fw-bold" id="msgErrorNom" style="font-size: 13px;"></div>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="apellido" class="fs-5 pb-1 fw-semibold">Apellido</label>
-                        <div class="input-group mt-1">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-person text-white"></i>
-                            </div>
-                            {{ form.apellido }}
-                        </div>
-                        <div class="text-danger fw-bold" id="msgErrorAp" style="font-size: 13px;"></div>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="email" class="fs-5 pb-1 fw-semibold">Email</label>
-                        <div class="input-group mt-1">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-envelope text-white"></i>
-                            </div>
-                            {{ form.email }}
-                        </div>
-                        <div class="text-danger fw-bold" id="msgErrorMail" style="font-size: 13px;"></div>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="telefono" class="fs-5 pb-1 fw-semibold">Teléfono</label>
-                        <div class="input-group mt-1">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-telephone text-white"></i>
-                            </div>
-                            {{ form.telefono }}
-                        </div>
-                        <div class="text-danger fw-bold" id="msgErrorTel" style="font-size: 13px;"></div>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="rut" class="fs-5 pb-1 fw-semibold">RUT</label>
-                        <div class="input-group mt-1">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-person-vcard text-white"></i>
-                            </div>
-                            {{ form.rut }}
-                        </div>
-                        <div class="text-danger fw-bold" id="msgErrorRUT" style="font-size: 13px;"></div>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="pass" class="fs-5 pb-1 fw-semibold">Contraseña</label>
-                        <div class="input-group mt-1">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-key-fill text-white"></i>
-                            </div>
-                            {{ form.contrasena }}
-                        </div>
-                        <div class="text-danger fw-bold" id="msgErrorPass" style="font-size: 13px;"></div>
-                    </div>
+<style>
+    /* Estilos médicos profesionales */
+    .medical-register-container {
+        background-color: #f8fafc;
+        padding: 3rem 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .medical-register-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        padding: 2.5rem;
+        border-top: 5px solid #1a6b9e;
+    }
+    
+    .medical-register-title {
+        color: #1a6b9e;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    .medical-register-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background-color: #1a6b9e;
+    }
+    
+    .medical-form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .medical-form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .medical-input-group {
+        margin-bottom: 0.25rem;
+    }
+    
+    .medical-input-group-text {
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+    }
+    
+    .medical-form-control {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+    }
+    
+    .medical-form-control:focus {
+        border-color: #1a6b9e;
+        box-shadow: 0 0 0 0.25rem rgba(26, 107, 158, 0.25);
+    }
+    
+    .medical-btn-register {
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        width: 100%;
+        transition: all 0.3s;
+        margin-top: 1rem;
+    }
+    
+    .medical-btn-register:hover {
+        background-color: #0d3b5e;
+        transform: translateY(-2px);
+    }
+    
+    .medical-register-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #666;
+    }
+    
+    .medical-register-link {
+        color: #1a6b9e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .medical-register-link:hover {
+        text-decoration: underline;
+    }
+    
+    .medical-error-message {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="medical-register-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="medical-register-card">
+                    <h2 class="medical-register-title">
+                        <i class="fas fa-user-plus me-2"></i>Registro Profesional
+                    </h2>
                     
-                
-                    <button class="btn btn-info text-white w-100 mt-5 fw-semibold shadow-sm" type="submit" id="btnEnviar">Registrarse</button>                
-                </form>
-                
-                <div class="text-center mt-4">
-                    ¿Ya tienes cuenta? <a href="{% url 'inicio' %}" class="text-info fw-bold text-decoration-none">Iniciar sesión</a>
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="medical-form-group">
+                                    <label for="nombre" class="medical-form-label">Nombre</label>
+                                    <div class="medical-input-group">
+                                        <span class="input-group-text medical-input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        {{ form.nombre }}
+                                    </div>
+                                    <div class="medical-error-message" id="msgErrorNom"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="medical-form-group">
+                                    <label for="apellido" class="medical-form-label">Apellido</label>
+                                    <div class="medical-input-group">
+                                        <span class="input-group-text medical-input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        {{ form.apellido }}
+                                    </div>
+                                    <div class="medical-error-message" id="msgErrorAp"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="medical-form-group">
+                            <label for="email" class="medical-form-label">Correo Electrónico</label>
+                            <div class="medical-input-group">
+                                <span class="input-group-text medical-input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                {{ form.email }}
+                            </div>
+                            <div class="medical-error-message" id="msgErrorMail"></div>
+                        </div>
+                        
+                        <div class="medical-form-group">
+                            <label for="telefono" class="medical-form-label">Teléfono</label>
+                            <div class="medical-input-group">
+                                <span class="input-group-text medical-input-group-text">
+                                    <i class="fas fa-phone"></i>
+                                </span>
+                                {{ form.telefono }}
+                            </div>
+                            <div class="medical-error-message" id="msgErrorTel"></div>
+                        </div>
+                        
+                        <div class="medical-form-group">
+                            <label for="rut" class="medical-form-label">RUT</label>
+                            <div class="medical-input-group">
+                                <span class="input-group-text medical-input-group-text">
+                                    <i class="fas fa-id-card"></i>
+                                </span>
+                                {{ form.rut }}
+                            </div>
+                            <div class="medical-error-message" id="msgErrorRUT"></div>
+                        </div>
+                        
+                        <div class="medical-form-group">
+                            <label for="pass" class="medical-form-label">Contraseña</label>
+                            <div class="medical-input-group">
+                                <span class="input-group-text medical-input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                {{ form.contrasena }}
+                            </div>
+                            <div class="medical-error-message" id="msgErrorPass"></div>
+                        </div>
+                        
+                        <button class="medical-btn-register" type="submit" id="btnEnviar">
+                            <i class="fas fa-user-check me-2"></i>Registrarse
+                        </button>
+                    </form>
+                    
+                    <div class="medical-register-footer">
+                        ¿Ya tienes cuenta? <a href="{% url 'inicio' %}" class="medical-register-link">Inicia sesión aquí</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script src="{% static 'usuarios/scripts/scripts.js'%}"></script>
 {% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'gt_store/base_general.html' %}
+
+{% block contenido %}
+<div class="container mt-5">
+    <div class="alert alert-danger">
+        <h2>Error en el Pago</h2>
+        <p>{{ error }}</p>
+    </div>
+    <a href="{% url 'carrito' %}" class="btn btn-primary">Volver al Carrito</a>
+</div>
+{% endblock %}

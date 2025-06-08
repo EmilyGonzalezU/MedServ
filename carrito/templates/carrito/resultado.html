@@ -1,45 +1,168 @@
 {% extends 'gt_store/base_general.html' %}
 
 {% block contenido %}
-    <!-- Botón para activar el modal -->
-    <div class="container text-center">
-        <h2 class="mb-4">¡Pedido Confirmado!</h2>
-        <p class="lead mb-4">Tu pedido ha sido realizado con éxito.</p>
-        <button type="button" class="btn btn-info text-white mt-2 fw-semibold shadow-sm border-info" data-bs-toggle="modal" data-bs-target="#confirmacionModal">
-            Ver Confirmación
-        </button>
-    </div>
+<style>
+    .medical-confirmation-container {
+        background-color: #f8fafc;
+        padding: 3rem 0;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .medical-confirmation-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        padding: 3rem;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+        border-top: 5px solid #1a6b9e;
+    }
+    
+    .medical-confirmation-icon {
+        color: #2ecc71;
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .medical-confirmation-title {
+        color: #1a6b9e;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .medical-confirmation-text {
+        color: #555;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    .medical-confirmation-btn {
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 600;
+        transition: all 0.3s;
+        margin: 0.5rem;
+    }
+    
+    .medical-confirmation-btn:hover {
+        background-color: #0d3b5e;
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .medical-confirmation-modal {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .medical-modal-header {
+        background-color: #1a6b9e;
+        color: white;
+        border-bottom: none;
+    }
+    
+    .medical-modal-success {
+        background-color: #e8f8f0;
+        border-left: 4px solid #2ecc71;
+        color: #27ae60;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .medical-modal-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    .medical-modal-footer {
+        border-top: none;
+        justify-content: center;
+    }
+    
+    .medical-modal-btn {
+        min-width: 150px;
+    }
+</style>
 
-    <!-- Modal -->
-    <div class="modal fade" id="confirmacionModal" tabindex="-1" aria-labelledby="confirmacionModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="confirmacionModalLabel">Confirmación de Pedido</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="d-flex justify-content-center mb-3">
-                        <div class="alert alert-success d-flex align-items-center" role="alert">
-                            <i class="bi bi-check-circle me-2" style="font-size: 24px;"></i>
-                            <span>¡Tu pedido ha sido realizado con éxito!</span>
-                        </div>
+<div class="medical-confirmation-container">
+    <div class="container">
+        <div class="medical-confirmation-card">
+            <i class="fas fa-check-circle medical-confirmation-icon"></i>
+            <h2 class="medical-confirmation-title">¡Pedido Confirmado!</h2>
+            <p class="medical-confirmation-text">
+                Tu pedido médico ha sido procesado con éxito. Hemos enviado los detalles a tu correo electrónico
+                y nuestro equipo se pondrá en contacto contigo para coordinar la entrega.
+            </p>
+            
+            <button type="button" class="medical-confirmation-btn" data-bs-toggle="modal" data-bs-target="#confirmacionModal">
+                <i class="fas fa-file-invoice me-2"></i>Ver Detalles del Pedido
+            </button>
+            
+            <a href="{% url 'home' %}" class="medical-confirmation-btn" style="background-color: white; color: #1a6b9e; border: 2px solid #1a6b9e;">
+                <i class="fas fa-arrow-left me-2"></i>Volver a la Tienda
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade medical-confirmation-modal" id="confirmacionModal" tabindex="-1" aria-labelledby="confirmacionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header medical-modal-header">
+                <h5 class="modal-title" id="confirmacionModalLabel">
+                    <i class="fas fa-clipboard-check me-2"></i>Confirmación de Pedido Médico
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="medical-modal-success d-flex align-items-center">
+                    <i class="fas fa-check-circle medical-modal-icon"></i>
+                    <div>
+                        <strong>¡Pedido confirmado exitosamente!</strong>
+                        <p class="mb-0">Recibirás un correo con los detalles de tu compra.</p>
                     </div>
-                    <p class="text-center">Gracias por tu compra. Tu pedido está en proceso y pronto recibirás una confirmación por correo electrónico.</p>
                 </div>
-                <div class="modal-footer">
-                    <a href="{% url 'home' %}" class="btn btn-info text-white  mt-2 fw-semibold shadow-sm border-info">Volver a la tienda</a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold text-center mb-3" style="color: #1a6b9e;">Detalles importantes:</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-clock me-2 text-muted"></i> Tiempo estimado de entrega: 3-5 días hábiles</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2 text-muted"></i> Contactaremos para coordinar la entrega</li>
+                        <li class="mb-2"><i class="fas fa-file-invoice me-2 text-muted"></i> Factura enviada a tu correo electrónico</li>
+                    </ul>
                 </div>
+                
+                <p class="text-center text-muted">
+                    Para cualquier consulta sobre tu pedido, no dudes en contactar a nuestro servicio al cliente.
+                </p>
+            </div>
+            <div class="modal-footer medical-modal-footer">
+                <a href="{% url 'home' %}" class="medical-confirmation-btn medical-modal-btn">
+                    <i class="fas fa-home me-2"></i>Volver a la Tienda
+                </a>
+                <button type="button" class="medical-confirmation-btn medical-modal-btn" style="background-color: #e74c3c;" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
-<!-- Incluye el script de Bootstrap al final del body para asegurar que todo el contenido se cargue primero -->
 {% block extra_scripts %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var myModal = new bootstrap.Modal(document.getElementById('confirmacionModal'));
+        myModal.show();
+    });
+</script>
 {% endblock %}
-
-
-

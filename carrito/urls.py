@@ -10,5 +10,7 @@ urlpatterns = [
     path('limpiar/', views.limpiar_carrito, name="CLS"),
     path('carrito/', views.carrito, name="carrito"),
     path('datos/', views.datos_usuario_compra, name="datos_usuario_compra"),
-    path('pago realizado con exito/', views.pago_exitoso, name="realizado"),
+    path('pago-exitoso/', views.pago_exitoso, name="pago_exitoso"),  # Cambiado a nombre consistente
+    path('webpay/iniciar/', views.iniciar_pago_webpay, name='iniciar_pago_webpay'),
+    path('webpay/respuesta/', views.webpay_respuesta, name='webpay_respuesta'),
 ]

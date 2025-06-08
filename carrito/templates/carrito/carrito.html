@@ -1,77 +1,312 @@
 {% extends 'gt_store/base_filtros.html' %}
 {% load humanize %}
+
 {% block contenido %}
-<div class="container-fluid mb-5 mt-5">
-    <div class="row">
-        <div class="col-lg-1 col-md-0"></div>
-        <div class="col-lg-7 col-md-8 col-12">
-            <div class="product-list">
+<style>
+    /* Estilos médicos profesionales */
+    .medical-cart-container {
+        background-color: #f8fafc;
+        padding: 2rem 0;
+    }
+    
+    .medical-cart-item {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-left: 4px solid #1a6b9e;
+    }
+    
+    .medical-cart-image-container {
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .medical-cart-image {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
+    .medical-cart-product-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+    
+    .medical-cart-price-section {
+        margin-bottom: 15px;
+    }
+    
+    .medical-cart-price-label {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .medical-cart-price-value {
+        font-weight: 600;
+        color: #1a6b9e;
+        font-size: 16px;
+    }
+    
+    .medical-cart-quantity {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+    }
+    
+    .medical-cart-quantity-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+        font-weight: bold;
+    }
+    
+    .medical-cart-quantity-value {
+        margin: 0 15px;
+        font-weight: 600;
+        min-width: 20px;
+        text-align: center;
+    }
+    
+    .medical-cart-stock-warning {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 10px;
+        font-weight: 500;
+    }
+    
+    .medical-cart-summary {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 20px;
+    }
+    
+    .medical-cart-summary-title {
+        color: #1a6b9e;
+        font-weight: 600;
+        border-bottom: 2px solid #1a6b9e;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .medical-cart-total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .medical-cart-total-label {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .medical-cart-total-value {
+        font-weight: 700;
+        color: #1a6b9e;
+        font-size: 18px;
+    }
+    
+    .medical-cart-total-value-transfer {
+        color: #2ecc71;
+    }
+    
+    .medical-cart-checkout-btn {
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 20px;
+        transition: all 0.3s;
+    }
+    
+    .medical-cart-checkout-btn:hover {
+        background-color: #0d3b5e;
+        transform: translateY(-2px);
+    }
+    
+    .medical-cart-empty {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .medical-cart-empty-icon {
+        font-size: 50px;
+        color: #ccc;
+        margin-bottom: 15px;
+    }
+    
+    .medical-cart-empty-title {
+        color: #666;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .medical-cart-empty-text {
+        color: #999;
+    }
+</style>
+
+<div class="medical-cart-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1 col-md-0"></div>
+            
+            <!-- Lista de Productos -->
+            <div class="col-lg-7 col-md-8 col-12">
                 {% if request.session.carrito.items %}
-                    {% for key, value in request.session.carrito.items %}
-                        <div class="product-item container-fluid mb-3">
-                            <div class="row">
-                                <div class="col-md-4 col-12 mb-2 mb-md-0">
-                                    <a href="{% url 'detalle_producto' value.producto_id %}">
-                                         <div class="container d-flex align-items-center justify-content-center" style="width: 100%; height: 100%;">
-                                             <img src="{{ value.imagen }}" alt="{{ value.nombre }}" class="img-fluid">
-                                         </div>
-                                     </a>
-                                 </div>
-                                <div class="col-md-8 col-12">
-                                    <p class="product-name">{{ value.nombre }}</p>
-                                    <div class="d-flex justify-content-between">
-                                        <p class="fw-bold">Total pago con transferencia:</p>
-                                        <p class="product-price" data-acumulado-transferencia="{{ value.acumulado_transferencia }}"></p>
+                    <h3 class="mb-4" style="color: #1a6b9e; font-weight: 600;">
+                        <i class="fas fa-shopping-cart me-2"></i>Tu Carrito Médico
+                    </h3>
+                    
+                    <div class="product-list">
+                        {% for key, value in request.session.carrito.items %}
+                            <div class="medical-cart-item">
+                                <div class="row">
+                                    <div class="col-md-4 col-12 mb-3 mb-md-0">
+                                        <a href="{% url 'detalle_producto' value.producto_id %}">
+                                            <div class="medical-cart-image-container">
+                                                <img src="{{ value.imagen }}" alt="{{ value.nombre }}" class="medical-cart-image">
+                                            </div>
+                                        </a>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <p>Total otros medios de pago:</p>
-                                        <p class="product-price" data-acumulado-normal="{{ value.acumulado_normal }}"></p>
+                                    
+                                    <div class="col-md-8 col-12">
+                                        <h4 class="medical-cart-product-name">{{ value.nombre }}</h4>
+                                        
+                                        <div class="medical-cart-price-section">
+                                            <div class="medical-cart-total-row">
+                                                <span class="medical-cart-price-label">Transferencia:</span>
+                                                <span class="medical-cart-price-value" data-acumulado-transferencia="{{ value.acumulado_transferencia }}"></span>
+                                            </div>
+                                            <div class="medical-cart-total-row">
+                                                <span class="medical-cart-price-label">Otros medios:</span>
+                                                <span class="medical-cart-price-value" data-acumulado-normal="{{ value.acumulado_normal }}"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="medical-cart-quantity">
+                                            <a href="{% url 'Sub' value.producto_id %}" class="medical-cart-quantity-btn">-</a>
+                                            <span class="medical-cart-quantity-value">{{ value.cantidad }}</span>
+                                            <a href="{% url 'Add' value.producto_id %}" class="medical-cart-quantity-btn {% if value.cantidad >= value.stock %}disabled{% endif %}">+</a>
+                                        </div>
+                                        
+                                        {% if value.cantidad >= value.stock %}
+                                            <p class="medical-cart-stock-warning">
+                                                <i class="fas fa-exclamation-circle me-1"></i>
+                                                Stock máximo disponible: {{ value.stock }} unidades
+                                            </p>
+                                        {% endif %}
                                     </div>
-                                    <div class="cantidadProductos d-flex align-items-center">
-                                        <a href="{% url 'Sub' value.producto_id %}" class="badge btn btn-dark badge-dark">-</a>
-                                        <span class="mx-2">{{ value.cantidad }}</span>
-                                        <a href="{% url 'Add' value.producto_id %}" class="badge btn btn-dark badge-dark {% if value.cantidad >= value.stock %}disabled{% endif %}">+</a>
-                                    </div>
-                                    {% if value.cantidad >= value.stock %}
-                                        <p class="stock-warning mt-2">No puedes agregar más de este producto. Stock disponible: {{ value.stock }}</p>
-                                    {% endif %}
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
                 {% else %}
-                    <p>No hay productos en el carrito.</p>
+                    <div class="medical-cart-empty">
+                        <div class="medical-cart-empty-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h4 class="medical-cart-empty-title">Tu carrito está vacío</h4>
+                        <p class="medical-cart-empty-text">Agrega productos médicos para continuar</p>
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary mt-3">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a la tienda
+                        </a>
+                    </div>
                 {% endif %}
             </div>
-        </div>
-        <div class="col-lg-3 col-md-4 col-12">
-            <div class="resumenFijo sticky-top mt-4 mt-md-0">
-                <div class="d-flex justify-content-between">
-                    <p class="fw-bold">Pago con transferencia:</p>
-                    <p class="product-price fw-bold fs-5 text-success" data-total-normal="{{total_carrito_transferencia}}"></p>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <p>Otro medio de pago:</p>
-                    <p class="product-price fs-5" data-total-normal="{{total_carrito_normal}}"></p>
-                </div>
-                <div class="row text-center mt-3">
-                    {% if request.session.user_nombre  %}
-                        {% if  request.session.carrito.items %}
-                            <div class="col-12 mb-2">
-                                <a href="{% url 'datos_usuario_compra' %}" class="btn btn-info text-white w-100 mt-2 fw-semibold shadow-sm">Continuar con la compra</a>
-                            </div>
+            
+            <!-- Resumen de Compra -->
+            <div class="col-lg-3 col-md-4 col-12">
+                {% if request.session.carrito.items %}
+                <div class="medical-cart-summary">
+                    <h4 class="medical-cart-summary-title">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Resumen
+                    </h4>
+                    
+                    <div class="medical-cart-total-row">
+                        <span class="medical-cart-total-label">Transferencia:</span>
+                        <span class="medical-cart-total-value medical-cart-total-value-transfer" data-total-normal="{{total_carrito_transferencia}}"></span>
+                    </div>
+                    
+                    <div class="medical-cart-total-row mb-4">
+                        <span class="medical-cart-total-label">Otros medios:</span>
+                        <span class="medical-cart-total-value" data-total-normal="{{total_carrito_normal}}"></span>
+                    </div>
+                    
+                    {% if request.session.user_nombre %}
+                        {% if request.session.carrito.items %}
+                            <a href="{% url 'datos_usuario_compra' %}" class="medical-cart-checkout-btn">
+                                <i class="fas fa-credit-card me-2"></i>Continuar Compra
+                            </a>
                         {% endif %}
                     {% else %}
-                        {% if  request.session.carrito.items %}
-                            <div class="col-12 mb-2">
-                                <a href="{% url 'tipo_usuario' %}" class="btn btn-info text-white w-100 mt-2 fw-semibold shadow-sm">Continuar con la compra</a>
-                            </div>
+                        {% if request.session.carrito.items %}
+                            <a href="{% url 'tipo_usuario' %}" class="medical-cart-checkout-btn " style="text-decoration: none;">
+                                <i class="fas fa-user-plus me-2"></i>Continuar Compra
+                            </a>
                         {% endif %}
                     {% endif %}
                 </div>
+                {% endif %}
             </div>
+            
+            <div class="col-lg-1 col-md-0"></div>
         </div>
-        <div class="col-lg-1 col-md-0"></div>
     </div>
 </div>
+
+<script>
+    // Formatear precios como moneda
+    document.addEventListener('DOMContentLoaded', function() {
+        function formatCurrency(value) {
+            return '$' + parseFloat(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        
+        // Formatear precios individuales
+        document.querySelectorAll('[data-acumulado-transferencia]').forEach(el => {
+            const value = el.getAttribute('data-acumulado-transferencia');
+            el.textContent = formatCurrency(value);
+        });
+        
+        document.querySelectorAll('[data-acumulado-normal]').forEach(el => {
+            const value = el.getAttribute('data-acumulado-normal');
+            el.textContent = formatCurrency(value);
+        });
+        
+        // Formatear totales
+        const totalTransferencia = document.querySelector('[data-total-normal]');
+        if (totalTransferencia) {
+            totalTransferencia.textContent = formatCurrency(totalTransferencia.getAttribute('data-total-normal'));
+        }
+        
+        const totalNormal = document.querySelectorAll('[data-total-normal]')[1];
+        if (totalNormal) {
+            totalNormal.textContent = formatCurrency(totalNormal.getAttribute('data-total-normal'));
+        }
+    });
+</script>
 {% endblock %}

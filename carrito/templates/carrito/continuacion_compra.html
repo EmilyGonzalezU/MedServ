@@ -1,121 +1,345 @@
 {% extends 'gt_store/base_general.html' %}
 {% block contenido %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <h2 class="fw-bold fs-5 mb-4">Datos del Usuario</h2>
-                        <div class="mb-3">
-                            <label for="{{  form.nombre_usuario.id_for_label }}" class="form-label">Nombre</label>
-                            {{  form.nombre_usuario }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.apellido_usuario.id_for_label }}" class="form-label">Apellido</label>
-                            {{  form.apellido_usuario }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.telefono_usuario.id_for_label }}" class="form-label">Teléfono</label>
-                            {{  form.telefono_usuario }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.email_usuario.id_for_label }}" class="form-label">Email</label>
-                            {{  form.email_usuario }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.rut_usuario.id_for_label }}" class="form-label">RUT</label>
-                            {{  form.rut_usuario }}
-                        </div>
+<style>
+    /* Estilos médicos profesionales */
+    .medical-checkout-container {
+        background-color: #f8fafc;
+        padding: 2rem 0;
+    }
+    
+    .medical-form-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border: none;
+        margin-bottom: 1.5rem;
+    }
+    
+    .medical-form-header {
+        background-color: #1a6b9e;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px 10px 0 0;
+        font-weight: 600;
+    }
+    
+    .medical-form-section {
+        padding: 1.5rem;
+    }
+    
+    .medical-form-title {
+        color: #1a6b9e;
+        font-weight: 600;
+        border-bottom: 2px solid #1a6b9e;
+        padding-bottom: 0.5rem;
+        margin: 1.5rem 0 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .medical-form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .medical-form-control {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        margin-bottom: 1rem;
+    }
+    
+    .medical-form-control:focus {
+        border-color: #1a6b9e;
+        box-shadow: 0 0 0 0.25rem rgba(26, 107, 158, 0.25);
+    }
+    
+    .medical-btn-pagar {
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        width: 100%;
+        transition: all 0.3s;
+        margin-top: 1rem;
+    }
+    
+    .medical-btn-pagar:hover {
+        background-color: #0d3b5e;
+        transform: translateY(-2px);
+    }
+    
+    .medical-summary-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border: none;
+        height: 100%;
+    }
+    
+    .medical-summary-header {
+        background-color: #1a6b9e;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px 10px 0 0;
+        font-weight: 600;
+    }
+    
+    .medical-summary-body {
+        padding: 1.5rem;
+    }
+    
+    .medical-product-item {
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+    }
+    
+    .medical-product-img {
+        border-radius: 8px;
+        object-fit: cover;
+        height: 80px;
+        width: 80px;
+    }
+    
+    .medical-product-name {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+    
+    .medical-product-price {
+        color: #1a6b9e;
+        font-weight: 600;
+    }
+    
+    .medical-price-label {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .medical-total-section {
+        background-color: #f1f9fe;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .medical-total-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .medical-total-amount {
+        font-size: 1.3rem;
+        color: #1a6b9e;
+        font-weight: 700;
+    }
+    
+    .required-field::after {
+        content: " *";
+        color: #e74c3c;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .medical-form-section {
+            padding: 1rem;
+        }
+        
+        .medical-product-img {
+            height: 60px;
+            width: 60px;
+        }
+    }
+</style>
 
-                        <h2 class="fw-bold fs-5 mb-4">Dirección</h2>
-                        <div class="mb-3">
-                            <label for="{{  form.calle.id_for_label }}" class="form-label">Calle</label>
-                            {{  form.calle }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.numero.id_for_label }}" class="form-label">Número</label>
-                            {{  form.numero }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.depto_casa.id_for_label }}" class="form-label">Depto/Casa</label>
-                            {{  form.depto_casa }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.nombre_receptor.id_for_label }}" class="form-label">Nombre Receptor</label>
-                            {{  form.nombre_receptor }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.apellido_receptor.id_for_label }}" class="form-label">Apellido Receptor</label>
-                            {{  form.apellido_receptor }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.rut_receptor.id_for_label }}" class="form-label">RUT Receptor</label>
-                            {{  form.rut_receptor }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.telefono_receptor.id_for_label }}" class="form-label">Teléfono Receptor</label>
-                            {{  form.telefono_receptor }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.region.id_for_label }}" class="form-label">Región</label>
-                            {{  form.region }}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{  form.comuna.id_for_label }}" class="form-label">Comuna</label>
-                            {{  form.comuna }}
-                        </div>
-                        <button type="submit" class="btn btn-info text-white w-100 mt-2 fw-semibold shadow-sm border-info">Realizar pago</button>
-                    </form>
+<div class="medical-checkout-container">
+    <div class="container">
+        <div class="row">
+            <!-- Formulario de Datos del Usuario -->
+            <div class="col-lg-6 mb-4">
+                <div class="medical-form-card">
+                    <div class="medical-form-header">
+                        <i class="fas fa-user-circle me-2"></i>Datos del Usuario
+                    </div>
+                    <div class="medical-form-section">
+                        <form method="POST" action="{% url 'iniciar_pago_webpay' %}">
+                            {% csrf_token %}
+                            
+                            <h3 class="medical-form-title">Información Personal</h3>
+                            <div class="mb-3">
+                                <label for="{{ form.nombre_usuario.id_for_label }}" class="medical-form-label">Nombre</label>
+                                {{ form.nombre_usuario }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.apellido_usuario.id_for_label }}" class="medical-form-label">Apellido</label>
+                                {{ form.apellido_usuario }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.telefono_usuario.id_for_label }}" class="medical-form-label">Teléfono</label>
+                                {{ form.telefono_usuario }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.email_usuario.id_for_label }}" class="medical-form-label">Email</label>
+                                {{ form.email_usuario }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.rut_usuario.id_for_label }}" class="medical-form-label">RUT</label>
+                                {{ form.rut_usuario }}
+                            </div>
+
+                            <h3 class="medical-form-title">Dirección de Envío</h3>
+                            <div class="mb-3">
+                                <label for="{{ form.calle.id_for_label }}" class="medical-form-label">Calle</label>
+                                {{ form.calle }}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.numero.id_for_label }}" class="medical-form-label">Número</label>
+                                    {{ form.numero }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.depto_casa.id_for_label }}" class="medical-form-label">Depto/Casa</label>
+                                    {{ form.depto_casa }}
+                                </div>
+                            </div>
+                            
+                            <h3 class="medical-form-title">Datos del Receptor</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.nombre_receptor.id_for_label }}" class="medical-form-label">Nombre</label>
+                                    {{ form.nombre_receptor }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.apellido_receptor.id_for_label }}" class="medical-form-label">Apellido</label>
+                                    {{ form.apellido_receptor }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.rut_receptor.id_for_label }}" class="medical-form-label">RUT</label>
+                                    {{ form.rut_receptor }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.telefono_receptor.id_for_label }}" class="medical-form-label">Teléfono</label>
+                                    {{ form.telefono_receptor }}
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.region.id_for_label }}" class="medical-form-label">Región</label>
+                                    {{ form.region }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="{{ form.comuna.id_for_label }}" class="medical-form-label">Comuna</label>
+                                    {{ form.comuna }}
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid mt-4">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-pagar text-white">
+                                    <i class="bi bi-lock-fill me-2"></i>Realizar Pago Seguro
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-6 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="fw-bold fs-5 mb-4">Resumen del Carrito</h2>
-                    <div class="product-list">
-                        {% if request.session.carrito.items %}
-                            {% for key, value in request.session.carrito.items %}
-                                <div class="product-item mb-3">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <a href="{% url 'detalle_producto' value.producto_id %}">
-                                                <div class="container d-flex align-items-center justify-content-center">
-                                                    <img src="{{ value.imagen }}" alt="{{ value.nombre }}" class="img-fluid">
-                                                </div>
-                                            </a>
-                                        </div>
-                                        <div class="col-8 product-details">
-                                            <p class="product-name">{{ value.nombre }}</p>
-                                            <div class="d-flex justify-content-between">
-                                                <p class="fw-bold">Total pago con transferencia:</p>
-                                                <p class="product-price" data-acumulado-transferencia="{{ value.acumulado_transferencia }}"></p>
+            
+            <!-- Resumen del Carrito -->
+            <div class="col-lg-6 mb-4">
+                <div class="medical-summary-card">
+                    <div class="medical-summary-header">
+                        <i class="fas fa-shopping-cart me-2"></i>Resumen del Pedido
+                    </div>
+                    <div class="medical-summary-body">
+                        <div class="product-list">
+                            {% if request.session.carrito.items %}
+                                {% for key, value in request.session.carrito.items %}
+                                    <div class="medical-product-item">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <a href="{% url 'detalle_producto' value.producto_id %}">
+                                                    <img src="{{ value.imagen }}" alt="{{ value.nombre }}" class="medical-product-img">
+                                                </a>
                                             </div>
-                                            <div class="d-flex justify-content-between">
-                                                <p>Total otros medios de pago:</p>
-                                                <p class="product-price" data-acumulado-normal="{{ value.acumulado_normal }}"></p>
+                                            <div class="col-8">
+                                                <p class="medical-product-name">{{ value.nombre }}</p>
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span class="medical-price-label">Transferencia:</span>
+                                                    <span class="medical-product-price" data-acumulado-transferencia="{{ value.acumulado_transferencia }}"></span>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="medical-price-label">Otros medios:</span>
+                                                    <span class="medical-product-price" data-acumulado-normal="{{ value.acumulado_normal }}"></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No hay productos en el carrito</p>
                                 </div>
-                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        
+                        {% if request.session.carrito.items %}
+                        <div class="medical-total-section">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="medical-total-text">Total Transferencia:</span>
+                                <span class="medical-total-amount" data-total-transferencia="{{ total_carrito_transferencia }}"></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="medical-total-text">Total Otros medios:</span>
+                                <span class="medical-total-amount" data-total-normal="{{ total_carrito_normal }}"></span>
+                            </div>
+                        </div>
                         {% endif %}
-                    </div>
-                    <div class="resumenFijo">
-                        <div class="d-flex justify-content-between">
-                            <p class="fw-bold">Pago con transferencia:</p>
-                            <p class="product-price fw-bold fs-5 text-success" data-total-transferencia="{{ total_carrito_transferencia }}"></p>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <p>Otro medio de pago:</p>
-                            <p class="product-price fs-5" data-total-normal="{{ total_carrito_normal }}"></p>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Formatear precios como moneda
+    document.addEventListener('DOMContentLoaded', function() {
+        function formatCurrency(value) {
+            return '$' + parseFloat(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        
+        // Formatear precios individuales
+        document.querySelectorAll('[data-acumulado-transferencia]').forEach(el => {
+            const value = el.getAttribute('data-acumulado-transferencia');
+            el.textContent = formatCurrency(value);
+        });
+        
+        document.querySelectorAll('[data-acumulado-normal]').forEach(el => {
+            const value = el.getAttribute('data-acumulado-normal');
+            el.textContent = formatCurrency(value);
+        });
+        
+        // Formatear totales
+        const totalTransferencia = document.querySelector('[data-total-transferencia]');
+        if (totalTransferencia) {
+            totalTransferencia.textContent = formatCurrency(totalTransferencia.getAttribute('data-total-transferencia'));
+        }
+        
+        const totalNormal = document.querySelector('[data-total-normal]');
+        if (totalNormal) {
+            totalNormal.textContent = formatCurrency(totalNormal.getAttribute('data-total-normal'));
+        }
+        
+        // Mejorar los campos de formulario
+        document.querySelectorAll('input, select').forEach(el => {
+            el.classList.add('medical-form-control');
+        });
+    });
+</script>
 {% endblock %}

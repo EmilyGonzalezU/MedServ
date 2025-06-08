@@ -1,3 +1,7 @@
+from datetime import datetime, timedelta
+import uuid
+from venv import logger
+from django.conf import settings
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponseRedirect
 from gt_store.models import Product
@@ -6,6 +10,8 @@ from django.contrib import messages
 from .models import  ProductoPedido
 from .forms import PedidoForm
 from usuarios.models import  PerfilUsuario
+from transbank.webpay.webpay_plus.transaction import Transaction, WebpayOptions
+from transbank.common.integration_type import IntegrationType
 
 class Carrito:
     def __init__(self, request):
@@ -95,30 +101,122 @@ def carrito(request):
 
 def datos_usuario_compra(request):
     carrito = request.session.get('carrito', {})
-    total_transferencia = sum(item['acumulado_transferencia'] for item in carrito.values())
-    total_normal = sum(item['acumulado_normal'] for item in carrito.values())
+    if not carrito:
+        return redirect('carrito')
 
     if request.method == 'POST':
         form = PedidoForm(request.POST)
         if form.is_valid():
-            pedido = form.save(commit=False)
-            
-            if request.user.is_authenticated:
-                pedido.usuario = request.user
-                # Opcionalmente, puedes rellenar los campos del usuario con la información del perfil
-                perfil_usuario = PerfilUsuario.objects.filter(email=request.user.email).first()
-                if perfil_usuario:
-                    pedido.nombre_usuario = perfil_usuario.nombre
-                    pedido.apellido_usuario = perfil_usuario.apellido
-                    pedido.telefono_usuario = perfil_usuario.telefono
-                    pedido.email_usuario = perfil_usuario.email
-                    pedido.rut_usuario = perfil_usuario.rut
-            pedido.total_transferencia = total_transferencia
-            pedido.total_normal = total_normal
-            pedido.save()
+            # Guardar datos en sesión para usar después del pago
+            request.session['datos_compra'] = form.cleaned_data
+            return redirect('iniciar_pago_webpay')
+    else:
+        initial = {}
+        if request.user.is_authenticated:
+            try:
+                # Usando email como campo de relación
+                perfil = PerfilUsuario.objects.get(email=request.user.email)
+                initial = {
+                    'nombre_usuario': perfil.nombre,
+                    'apellido_usuario': perfil.apellido,
+                    'telefono_usuario': perfil.telefono,
+                    'email_usuario': perfil.email,
+                    'rut_usuario': perfil.rut
+                }
+            except PerfilUsuario.DoesNotExist:
+                pass
+        
+        form = PedidoForm(initial=initial)
 
-            for item in carrito.values():
-                try:
+    return render(request, 'carrito/continuacion_compra.html', {
+        'form': form,
+        'total_normal': sum(item['acumulado_normal'] for item in carrito.values()),
+        'total_transferencia': sum(item['acumulado_transferencia'] for item in carrito.values())
+    })
+#Pedido realizado
+def pago_exitoso (request):
+    return render(request, 'carrito/resultado.html')
+
+
+def iniciar_pago_webpay(request):
+    carrito = request.session.get('carrito', {})
+    if not carrito:
+        messages.error(request, "No hay productos en el carrito")
+        return redirect('carrito')
+
+    total = sum(float(item['acumulado_normal']) for item in carrito.values())
+    
+    total = int(round(total))
+    
+    if total <= 0:
+        messages.error(request, "El monto total debe ser mayor a cero")
+        return redirect('datos_usuario_compra')
+
+    tx = Transaction(WebpayOptions(
+        commerce_code=settings.TRANSBANK["commerce_code"],
+        api_key=settings.TRANSBANK["api_key"],
+        integration_type=IntegrationType.TEST
+    ))
+
+    buy_order = str(int(datetime.now().timestamp()))[:26]
+    session_id = request.session.session_key or "sess_" + str(uuid.uuid4())[:8]
+    return_url = request.build_absolute_uri('/carrito/webpay/respuesta/')
+
+    try:
+        response = tx.create(buy_order=buy_order, session_id=session_id, amount=total, return_url=return_url)
+        token = getattr(response, 'token', response.get('token'))
+        url = getattr(response, 'url', response.get('url'))
+
+        if not token or not url:
+            raise ValueError("Respuesta de WebPay incompleta")
+
+        request.session['webpay_data'] = {
+            'token': token,
+            'buy_order': buy_order,
+            'amount': total,
+            'session_id': session_id
+        }
+        
+        # Guardar también los datos del carrito para después del pago
+        request.session['carrito_para_pago'] = carrito
+        
+        return redirect(f"{url}?token_ws={token}")
+
+    except Exception as e:
+        logger.error(f"Error al iniciar pago WebPay: {str(e)}", exc_info=True)
+        messages.error(request, f"Error al iniciar el pago: {str(e)}")
+        return redirect('datos_usuario_compra')
+
+# Procesa la respuesta de WebPay después del pago
+
+def webpay_respuesta(request):
+    token = request.GET.get("token_ws")
+    if not token:
+        return render(request, "carrito/resultado.html", {"error": "Token no proporcionado"})
+
+    try:
+        tx = Transaction(WebpayOptions(
+            commerce_code=settings.TRANSBANK["commerce_code"],
+            api_key=settings.TRANSBANK["api_key"],
+            integration_type=IntegrationType.TEST
+        ))
+        
+        commit_response = tx.commit(token)
+        
+        if commit_response.response_code == 0:
+            # Pago exitoso
+            datos_compra = request.session.get('datos_compra', {})
+            carrito = request.session.get('carrito_para_pago', {})
+            
+            # Crear pedido
+            form = PedidoForm(datos_compra)
+            if form.is_valid():
+                pedido = form.save(commit=False)
+                pedido.total_normal = sum(float(item['acumulado_normal']) for item in carrito.values())
+                pedido.total_transferencia = sum(float(item['acumulado_transferencia']) for item in carrito.values())
+                pedido.save()
+
+                for item in carrito.values():
                     producto = Product.objects.get(id_producto=item['producto_id'])
                     ProductoPedido.objects.create(
                         pedido=pedido,
@@ -126,33 +224,19 @@ def datos_usuario_compra(request):
                         cantidad=item['cantidad'],
                         precio=item['acumulado_normal']
                     )
-                except Product.DoesNotExist:
-                    messages.error(request, f"Producto con id {item['producto_id']} no encontrado.")
-                    return redirect('carrito_datos')  
-
-            for item in carrito.values():
-                try:
-                    producto = Product.objects.get(id_producto=item['producto_id'])
                     producto.stock -= item['cantidad']
                     producto.save()
-                except Product.DoesNotExist:
-                    messages.error(request, f"Producto con id {item['producto_id']} no encontrado al actualizar stock.")
-                    return redirect('carrito_datos')  
 
-            request.session.pop('carrito', None)
-
-            messages.success(request, "Compra realizada con éxito.")
-            return redirect('realizado')
-    else:
-        form = PedidoForm()
-
-    context = {
-        'form': form,
-        'carrito': carrito,
-    }
-
-    return render(request, 'carrito/continuacion_compra.html', context)
-
-#Pedido realizado
-def pago_exitoso (request):
-    return render(request, 'carrito/resultado.html')
+            # Limpiar sesiones
+            for key in ['carrito', 'carrito_para_pago', 'datos_compra', 'webpay_data']:
+                if key in request.session:
+                    del request.session[key]
+            
+            return redirect('pago_exitoso')
+        else:
+            error_msg = f"Transbank rechazó el pago. Código: {commit_response.response_code}"
+            return render(request, "carrito/resultado.html", {"error": error_msg})
+            
+    except Exception as e:
+        logger.error(f"Error en webpay_respuesta: {str(e)}")
+        return render(request, "carrito/resultado.html", {"error": "Error al procesar el pago"})

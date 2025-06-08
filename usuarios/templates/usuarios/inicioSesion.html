@@ -1,48 +1,175 @@
 {% extends 'gt_store/base_general.html' %}
 {% load static %}
+
 {% block contenido %}
-<div class="container-fluid pt-5">
-    <div class="row justify-content-center align-items-center">
-        <div class="col-md-4">
-            <div class="p-5 rounded-5 text-secondary shadow">
-                <div class="text-start fs-3 fw-bold mb-4">Inicio de Sesión</div>
-                <form method="post" id="sing-up-form" novalidate>
-                    {% csrf_token %}
-                    <div class="form-group mb-3" style="height: 100px;">
-                        <label for="email" class="fs-5 mt-1 pb-1 fw-semibold">Ingrese email</label>
-                        <div class="input-group mt-1 pb-2">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-envelope text-white"></i>
+<style>
+    .medical-auth-container {
+        background-color: #f8fafc;
+        padding: 3rem 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .medical-auth-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        padding: 2.5rem;
+        border-top: 5px solid #1a6b9e;
+    }
+    
+    .medical-auth-title {
+        color: #1a6b9e;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    .medical-auth-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background-color: #1a6b9e;
+    }
+    
+    .medical-form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .medical-form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .medical-input-group {
+        margin-bottom: 0.25rem;
+    }
+    
+    .medical-input-group-text {
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+    }
+    
+    .medical-form-control {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+    }
+    
+    .medical-form-control:focus {
+        border-color: #1a6b9e;
+        box-shadow: 0 0 0 0.25rem rgba(26, 107, 158, 0.25);
+    }
+    
+    .medical-btn-auth {
+        background-color: #1a6b9e;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        width: 100%;
+        transition: all 0.3s;
+    }
+    
+    .medical-btn-auth:hover {
+        background-color: #0d3b5e;
+        transform: translateY(-2px);
+    }
+    
+    .medical-auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #666;
+    }
+    
+    .medical-auth-link {
+        color: #1a6b9e;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    
+    .medical-auth-link:hover {
+        text-decoration: underline;
+    }
+    
+    .medical-error-message {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="medical-auth-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="medical-auth-card">
+                    <h2 class="medical-auth-title">
+                        <i class="fas fa-user-shield me-2"></i>Acceso MedServ
+                    </h2>
+                    
+                    <form method="post" id="sing-up-form" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="medical-form-group">
+                            <label for="email" class="medical-form-label">Correo Electrónico</label>
+                            <div class="medical-input-group">
+                                <span class="input-group-text medical-input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input class="form-control medical-form-control {% if email_error %}is-invalid{% endif %}" 
+                                       id="email" type="email" name="email" required placeholder="tu@email.com" />
                             </div>
-                            <input class="form-control bg-light {% if email_error %}is-invalid{% endif %}" id="email" type="email" name="email" required />
-                        </div>
-                        <div class="text-danger fw-bold" id="msgErrorMailInicio" style="font-size: 13px;">
-                            {% if email_error %}{{ email_error }}{% endif %}
-                        </div>
-                    </div>
-                    <div class="form-group" style="height: 100px;">
-                        <label for="password" class="fs-5 pb-1 fw-semibold">Contraseña</label>
-                        <div class="input-group mt-1">
-                            <div class="input-group-text bg-info">
-                                <i class="bi bi-key-fill text-white"></i>
+                            {% if email_error %}
+                            <div class="medical-error-message">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ email_error }}
                             </div>
-                            <input class="form-control bg-light {% if password_error %}is-invalid{% endif %}" id="password" type="password" name="password" required />
+                            {% endif %}
                         </div>
-                        <div class="text-danger fw-bold" id="msgErrorPassInicio" style="font-size: 13px;">
-                            {% if password_error %}{{ password_error }}{% endif %}
+                        
+                        <div class="medical-form-group">
+                            <label for="password" class="medical-form-label">Contraseña</label>
+                            <div class="medical-input-group">
+                                <span class="input-group-text medical-input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input class="form-control medical-form-control {% if password_error %}is-invalid{% endif %}" 
+                                       id="password" type="password" name="password" required placeholder="••••••••" />
+                            </div>
+                            {% if password_error %}
+                            <div class="medical-error-message">
+                                <i class="fas fa-exclamation-circle me-1"></i>{{ password_error }}
+                            </div>
+                            {% endif %}
                         </div>
+                        
+                        <div class="medical-form-group text-end">
+                            <a href="#" class="medical-auth-link" style="font-size: 0.9rem">
+                                <i class="fas fa-question-circle me-1"></i>¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+                        
+                        <button class="medical-btn-auth mb-3" type="submit" id="btn">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                        </button>
+                    </form>
+                    
+                    <div class="medical-auth-footer">
+                        ¿No tienes cuenta? <a href="{% url 'registro' %}" class="medical-auth-link">Regístrate aquí</a>
                     </div>
-                    <button class="btn btn-info text-white w-100 mt-2 fw-semibold shadow-sm" type="submit" id="btn">Iniciar sesión</button>
-                    <div class="pt-1 mb-1 text-center">
-                        <a href="#" class="text-decoration-none text-info fw-semibold" style="font-size: 0.9rem">¿Olvidaste la contraseña?</a>
-                    </div>
-                </form>
-                <div class="text-center mt-4">
-                    ¿No tienes cuenta? <a href="{% url 'registro' %}" class="text-info fw-bold text-decoration-none">Registrarse</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script src="{% static 'usuarios/scripts/scriptInicio.js' %}"></script>
 {% endblock %}

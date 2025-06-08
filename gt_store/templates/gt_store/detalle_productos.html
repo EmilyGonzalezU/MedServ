@@ -1,89 +1,196 @@
 {% extends 'gt_store/base_filtros.html' %}
 {% load static %}
 {% block contenido %}
-<div class="container mt-5 border p-4">
-    <div class="row">
-        <!-- Carousel de Imágenes del Producto -->
-        <div class="col-md-8">
-            <div id="product-images" class="carousel slide" data-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="{{ producto.imagen.url }}" class="d-block w-100 img-small" alt="Product Image 1">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ producto.imagen.url }}" class="d-block w-100 img-small" alt="Product Image 2">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{{ producto.imagen.url }}" class="d-block w-100 img-small" alt="Product Image 3">
-                    </div>
-                </div>
-                <a class="carousel-control-prev" href="#product-images" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#product-images" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-        </div>
+<style>
+    /* Estilo para detalle de producto médico */
+    .medical-product-detail {
+        background-color: #f8fafc;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .medical-product-images {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    .medical-product-info {
+        background-color: white;
+        border-radius: 8px;
+        padding: 30px;
+    }
+    
+    .medical-product-brand {
+        color: #1a6b9e;
+        font-weight: 600;
+        font-size: 18px;
+    }
+    
+    .medical-product-title {
+        color: #333;
+        font-weight: 700;
+        font-size: 24px;
+        margin: 10px 0;
+    }
+    
+    .medical-product-description {
+        color: #555;
+        line-height: 1.6;
+        margin: 20px 0;
+    }
+    
+    .medical-price-section {
+        background-color: #f1f9fe;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+    
+    .medical-price-label {
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .medical-price-value {
+        color: #1a6b9e;
+        font-weight: 700;
+        font-size: 20px;
+    }
+    
+    .medical-old-price {
+        text-decoration: line-through;
+        color: #999;
+    }
+    
+    .medical-discount-badge {
+        background-color: #e74c3c;
+        color: white;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    .medical-btn-primary {
+        background-color: #1a6b9e;
+        color: white;
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    .medical-btn-primary:hover {
+        background-color: #0d3b5e;
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .medical-btn-outline {
+        border: 2px solid #1a6b9e;
+        color: #1a6b9e;
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    .medical-btn-outline:hover {
+        background-color: #f1f9fe;
+    }
+    
+    .medical-stock-info {
+        color: #333;
+        font-weight: 500;
+    }
+    
+    .medical-stock-high {
+        color: #2ecc71;
+    }
+    
+    .medical-stock-low {
+        color: #e74c3c;
+    }
+</style>
 
-        <!-- Información del Producto -->
-        <div class="col-md-4">
-            <p class="product-brand mb-3 fw-bold">{{ producto.marca }}</p>
-            <div class="product-description mb-4">
-                <p>{{ producto.nombre_producto }}</p>
-            </div>
-            <div class="product-description mb-4">
-                <p>{{ producto.descripcion }}</p>
-            </div>
-            <!-- Precios del Producto -->
-            <div class="pricing mb-4">
-                {% if producto.precio_anterior or producto.descuento %}
-                    {% if producto.precio_anterior %}
-                        <div class="d-flex justify-content-between">
-                            <p class="old-price_product">Normal:</p>
-                            <p class="text-end text-decoration-line-through" id="precio-anterior"></p>
+<div class="container my-5">
+    <div class="medical-product-detail p-4">
+        <div class="row">
+            <div class="col-md-7 mb-4">
+                <div class="medical-product-images h-100">
+                    <div id="product-images" class="carousel slide h-100" data-bs-ride="carousel">
+                        <div class="carousel-inner h-100">
+                            <div class="carousel-item active h-100">
+                                <div class="d-flex align-items-center justify-content-center h-100">
+                                    <img src="{{ producto.imagen.url }}" class="img-fluid" alt="Product Image" style="max-height: 400px;">
+                                </div>
+                            </div>
                         </div>
-                    {% endif %}
-                    {% if producto.descuento %}
-                        <div class="d-flex justify-content-between">
-                            <p>Descuento:</p>
-                            <p class="text-end dscto">{{ producto.descuento }}% DCTO.</p>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#product-images" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#product-images" data-bs-slide="next">
+                            <span class="carousel-control-next-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="medical-product-info h-100">
+                    <p class="medical-product-brand mb-2">{{ producto.marca }}</p>
+                    <h1 class="medical-product-title">{{ producto.nombre_producto }}</h1>
+                    
+                    <div class="medical-product-description">
+                        <p>{{ producto.descripcion }}</p>
+                    </div>
+                    <div class="medical-price-section">
+                        {% if producto.precio_anterior or producto.descuento %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="medical-price-label">Precio normal:</span>
+                            <div class="text-end">
+                                {% if producto.precio_anterior %}
+                                <span class="medical-old-price me-2">${{ producto.precio_anterior|floatformat:0 }}</span>
+                                {% endif %}
+                                {% if producto.descuento %}
+                                <span class="medical-discount-badge">{{ producto.descuento }}% DCTO.</span>
+                                {% endif %}
+                            </div>
                         </div>
-                    {% endif %}
-                {% endif %}
-                <div class="d-flex justify-content-between">
-                    <p class="fw-bold">Pago con transferencia:</p>
-                    <p class="text-end fw-bold fs-5" data-precio-transferencia="{{ producto.precio_transferencia }}"></p>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <p>Otros medios de pago:</p>
-                    <p class="text-end fw-bold fs-5" data-precio-transferencia="{{ producto.precio_normal }}"></p>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="medical-price-label">Transferencia:</span>
+                            <span class="medical-price-value text-success">${{ producto.precio_transferencia|floatformat:0 }}</span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="medical-price-label">Otros medios:</span>
+                            <span class="medical-price-value">${{ producto.precio_normal|floatformat:0 }}</span>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-3 mb-4">
+                        <a href="{% url 'Add' producto.id_producto %}" class="btn medical-btn-primary">
+                            <i class="fas fa-cart-plus me-2"></i>Agregar al carrito
+                        </a>
+                        <a href="{% url 'datos_usuario_compra' %}" class="btn medical-btn-outline">
+                            <i class="fas fa-bolt me-2"></i>Comprar ahora
+                        </a>
+                    </div>
+                    <div class="medical-stock-info">
+                        {% if producto.stock > 10 %}
+                            <p><i class="fas fa-check-circle medical-stock-high me-2"></i>Disponible ({{ producto.stock }} unidades)</p>
+                        {% elif producto.stock > 0 %}
+                            <p><i class="fas fa-exclamation-circle medical-stock-low me-2"></i>Últimas unidades ({{ producto.stock }})</p>
+                        {% else %}
+                            <p><i class="fas fa-times-circle medical-stock-low me-2"></i>Agotado</p>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-
-            <!-- Botones de Acción -->
-            <div class="d-grid gap-2 mb-4">
-                <a href="{% url 'Add' producto.id_producto %}" class="btn btn-info text-white w-100 mt-2 fw-semibold shadow-sm">Agregar al carrito</a>
-                <a href="{% url 'datos_usuario_compra' %}"><button class="btn btn-white text-info w-100 mt-2 fw-semibold shadow-sm border-info">Comprar ahora</button></a>
-            </div>
-
-            <!-- Información de Stock -->
-            {% if producto.stock == 1 %}
-                <p><strong>Stock online:</strong> {{ producto.stock }} Unidad</p>
-            {% else %}
-                <p><strong>Stock online:</strong> {{ producto.stock }} Unidades</p>
-            {% endif %}
         </div>
     </div>
 </div>
-<style>
-    .img-small {
-        max-width: 50%;
-        max-height: 50%;
-        margin: 0 auto;
-        display: block;
-    }
-</style>
 {% endblock %}
