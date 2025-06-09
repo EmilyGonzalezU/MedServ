@@ -1,0 +1,178 @@
+{% extends 'gt_store/base_general.html' %}
+{% load static %}
+{% block contenido %}
+<style>
+    .medical-product-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+        background: white;
+        align-items: center;
+    }
+    
+    .medical-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    .medical-product-image {
+        height: 200px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+    }
+    
+    .medical-product-image img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
+    .medical-product-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #e74c3c;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .medical-product-body {
+        padding: 15px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .medical-product-brand {
+        color: #1a6b9e;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .medical-product-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .medical-product-desc {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 15px;
+        flex-grow: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .medical-product-price-section {
+        border-top: 1px dashed #ddd;
+        padding-top: 15px;
+        margin-top: auto;
+    }
+    
+    .medical-product-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a6b9e;
+    }
+    
+    .medical-product-old-price {
+        font-size: 14px;
+        text-decoration: line-through;
+        color: #999;
+    }
+    
+    .medical-payment-method {
+        font-size: 12px;
+        color: #666;
+        margin-top: 3px;
+    }
+    
+    .medical-product-category {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #1a6b9e;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="col-md-12 col-lg-9 col-sm-12 col-xs-12" > 
+    <div class="row" style=": center;">
+        {% for p in productos %}
+        <div class="col-lg-4 col-md-6 col-sm-6 mb-4" >
+            <div class="medical-product-card h-100" >
+                <a href="{% url 'detalle_producto' p.id_producto %}" class="text-decoration-none text-dark h-100 d-flex flex-column">
+                    <div class="medical-product-image">
+                        {% if p.imagen %}
+                        <img src="{{ p.imagen.url }}" alt="{{ p.marca }}">
+                        {% endif %}
+                        {% if p.descuento %}
+                        <span class="medical-product-badge">-{{ p.descuento }}%</span>
+                        {% endif %}
+                        <span class="medical-product-category">
+                            {% if p.tipo_pc == 'pc_gamer' %}Diagnóstico{% else %}Monitoreo{% endif %}
+                        </span>
+                    </div>
+                    <div class="medical-product-body">
+                        <p class="medical-product-brand">{{ p.marca }}</p>
+                        <h5 class="medical-product-title">{{ p.nombre_producto }}</h5>
+                        <p class="medical-product-desc">{{ p.descripcion }}</p>
+                        
+                        <div class="medical-product-price-section">
+                            {% if p.precio_anterior %}
+                            <span class="medical-product-old-price">${{ p.precio_anterior|floatformat:0 }}</span>
+                            {% endif %}
+                            <p class="medical-product-price mb-1">${{ p.precio_normal|floatformat:0 }}</p>
+                            <p class="medical-payment-method">Precio normal</p>
+                            
+                            <p class="medical-product-price mb-1 text-success">${{ p.precio_transferencia|floatformat:0 }}</p>
+                            <p class="medical-payment-method">Transferencia</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/filtro.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function formatCurrency(value) {
+            return '$' + parseFloat(value).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        document.querySelectorAll('.medical-product-category').forEach(el => {
+            if (el.textContent.trim() === 'pc_gamer') {
+                el.textContent = 'DIAGNÓSTICO';
+            } else if (el.textContent.trim() === 'pc_oficina') {
+                el.textContent = 'MONITOREO';
+            }
+        });
+    });
+</script>
+{% endblock %}

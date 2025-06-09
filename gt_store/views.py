@@ -39,6 +39,13 @@ def general_pc(request):
                 
     return render(request, 'gt_store/general_pc.html', context)
 
+def general_planes(request):
+    productos = models.Audifono.objects.all()
+
+    context = {"productos": productos}
+                
+    return render(request, 'gt_store/planes.html', context)
+
 #Computation
 def general_notebooks(request):
     notebooks = models.Notebook.objects.all()
