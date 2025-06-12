@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 class Product(models.Model):
@@ -186,4 +187,11 @@ class Monitor(Product):
     def __str__(self):
         return str(self.marca)
     
-    
+class Contacto(models.Model):
+    nombre = models.CharField(max_length=60)
+    email = models.EmailField(max_length=100)
+    mensaje = models.TextField()
+    fecha = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.email}"

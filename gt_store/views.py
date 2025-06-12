@@ -1,5 +1,8 @@
+from pyexpat.errors import messages
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+
+from gt_store.forms import  ContactoForm
 from . import models
 from itertools import chain
 import random
@@ -45,6 +48,13 @@ def general_planes(request):
     context = {"productos": productos}
                 
     return render(request, 'gt_store/planes.html', context)
+
+def general_soporte(request):
+    productos = models.Audifono.objects.all()
+
+    context = {"productos": productos}
+                
+    return render(request, 'gt_store/soporte.html', context)
 
 #Computation
 def general_notebooks(request):
@@ -190,3 +200,22 @@ def filtrar_gabinete(request):
         'productos': filter.qs
     }
     return render(request, 'gt_store/general_gabinete.html', context)
+
+def contacto(request):
+    enviado = False
+    
+    if request.method == 'POST':
+        form = ContactoForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect(request.path + '?enviado=True')
+            except Exception:
+                enviado = False
+        else:
+            enviado = False
+    else:
+        form = ContactoForm()
+        enviado = request.GET.get('enviado') == 'True'
+
+    return render(request, 'gt_store/soporte.html', {'form': form, 'enviado': enviado})

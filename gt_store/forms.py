@@ -71,3 +71,29 @@ class Monitor_form(forms.ModelForm):
     class Meta:
         model = models.Monitor
         fields = '__all__'
+
+
+class ContactoForm(forms.ModelForm):
+    class Meta:
+        model = models.Contacto
+        fields = ['nombre', 'email', 'mensaje']
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Tu nombre completo'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'tu@ejemplo.com'
+            }),
+            'mensaje': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Escribe tu mensaje aquí...',
+                'rows': 5
+            }),
+        }
+        labels = {
+            'nombre': 'Nombre Completo',
+            'email': 'Correo Electrónico',
+            'mensaje': 'Mensaje'
+        }

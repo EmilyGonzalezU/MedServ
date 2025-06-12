@@ -1,6 +1,8 @@
 {% extends 'gt_store/base_general.html' %}
 {% load static %}
+
 {% block contenido %}
+
 <style>
     .medical-product-card {
         height: 100%;
@@ -12,7 +14,16 @@
         transition: all 0.3s ease;
         border: 1px solid #e0e0e0;
         background: white;
-        align-items: center;
+        justify-content: center;
+    }
+     
+    .medical-btn-primary {
+        background-color: #1a6b9e;
+        color: white;
+        font-weight: 600;
+        padding: 12px;
+        border-radius: 8px;
+        transition: all 0.3s;
     }
     
     .medical-product-card:hover {
@@ -118,12 +129,11 @@
     }
 </style>
 
-<div class="col-md-12 col-lg-9 col-sm-12 col-xs-12" > 
-    <div class="row" style=": center;">
+<div class="col-md-12 col-lg-12 col-sm-12 col-xs-12" style="padding-top: 50px; padding-bottom: 50px;"> 
+    <div class="row" style="justify-content: center; ">
         {% for p in productos %}
         <div class="col-lg-4 col-md-6 col-sm-6 mb-4" >
             <div class="medical-product-card h-100" >
-                <a href="{% url 'detalle_producto' p.id_producto %}" class="text-decoration-none text-dark h-100 d-flex flex-column">
                     <div class="medical-product-image">
                         {% if p.imagen %}
                         <img src="{{ p.imagen.url }}" alt="{{ p.marca }}">
@@ -131,9 +141,6 @@
                         {% if p.descuento %}
                         <span class="medical-product-badge">-{{ p.descuento }}%</span>
                         {% endif %}
-                        <span class="medical-product-category">
-                            {% if p.tipo_pc == 'pc_gamer' %}Diagnóstico{% else %}Monitoreo{% endif %}
-                        </span>
                     </div>
                     <div class="medical-product-body">
                         <p class="medical-product-brand">{{ p.marca }}</p>
@@ -150,8 +157,11 @@
                             <p class="medical-product-price mb-1 text-success">${{ p.precio_transferencia|floatformat:0 }}</p>
                             <p class="medical-payment-method">Transferencia</p>
                         </div>
+                        <a href="#" class="btn medical-btn-primary">
+                            <i class="fas fa-cart-plus me-2"></i>Solicitar
+                        </a>
                     </div>
-                </a>
+                    
             </div>
         </div>
         {% endfor %}

@@ -3,8 +3,8 @@
 {% load static %}
 
 {% block breadcrumb %}
-    <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
-    <li class="breadcrumb-item"><a href="#">Repuestos</a></li>
+    <li class="breadcrumb-item text-white" ><a style="text-decoration: none; color: #1a6b9e"  href="{% url 'home' %}">Inicio</a></li>
+    <li class="breadcrumb-item text-white"><a style="text-decoration: none; color: #1a6b9e"  href="#">Repuestos</a></li>
 {% endblock %}
 
 {% block filtros %}
@@ -97,21 +97,28 @@
                     <div class="accordion-body medical-accordion-body">
                         <div class="medical-form-check">
                             <input class="medical-form-check-input" type="checkbox" name="tipo_pc" value="pc_gamer" id="tipoGamer">
-                            <label class="medical-form-check-label" for="tipoGamer">Equipos de Diagnóstico</label>
+                            <label class="medical-form-check-label" for="tipoGamer">Equimaniento de Diagnóstico</label>
                         </div>
                         <div class="medical-form-check">
                             <input class="medical-form-check-input" type="checkbox" name="tipo_pc" value="pc_oficina" id="tipoOficina">
-                            <label class="medical-form-check-label" for="tipoOficina">Equipos de Monitoreo</label>
+                            <label class="medical-form-check-label">Equipamiento Terapéutico</label>
+                        </div>
+                        <div class="medical-form-check">
+                            <input class="medical-form-check-input" type="checkbox" name="tipo_pc" value="pc_oficina" id="tipoOficina">
+                            <label class="medical-form-check-label">Equipamiento Quiruúrgico</label>
+                        </div>
+                        <div class="medical-form-check">
+                            <input class="medical-form-check-input" type="checkbox" name="tipo_pc" value="pc_oficina" id="tipoOficina">
+                            <label class="medical-form-check-label">Equipamiento de Laboratorio</label>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed medical-accordion-button" type="button" data-bs-toggle="collapse"
                         data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-                        <i class="fas fa-tag me-2"></i>Rango de Precio
+                        <i class="fas fa-tag me-2"></i>Precio
                     </button>
                 </h2>
                 <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
@@ -135,6 +142,38 @@
                         <div class="medical-form-check">
                             <input class="medical-form-check-input" type="checkbox" name="precio_normal__gte" value="5000001" id="rango4Precio">
                             <label class="medical-form-check-label" for="rango4Precio">$5.000.001 - $10.000.000</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed medical-accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseThree">
+                        <i class="fas fa-tag me-2"></i>Marca
+                    </button>
+                </h2>
+                <div id="flush-collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body medical-accordion-body">
+                        <div class="medical-form-check">
+                            <input class="medical-form-check-input" type="checkbox" name="precio_normal__lte" value="1000000" id="rango0Precio">
+                            <label class="medical-form-check-label" for="rango0Precio">Omron</label>
+                        </div>
+                        <div class="medical-form-check">
+                            <input class="medical-form-check-input" type="checkbox" name="precio_normal__gte" value="1000001" id="rango1Precio">
+                            <label class="medical-form-check-label" for="rango1Precio">Choicemmed</label>
+                        </div>
+                        <div class="medical-form-check">
+                            <input class="medical-form-check-input" type="checkbox" name="precio_normal__gte" value="2000001" id="rango2Precio">
+                            <label class="medical-form-check-label" for="rango2Precio">Philips</label>
+                        </div>
+                        <div class="medical-form-check">
+                            <input class="medical-form-check-input" type="checkbox" name="precio_normal__gte" value="3000001" id="rango3Precio">
+                            <label class="medical-form-check-label" for="rango3Precio">Bercom</label>
+                        </div>
+                        <div class="medical-form-check">
+                            <input class="medical-form-check-input" type="checkbox" name="precio_normal__gte" value="5000001" id="rango4Precio">
+                            <label class="medical-form-check-label" for="rango4Precio">Littmann</label>
                         </div>
                     </div>
                 </div>

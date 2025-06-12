@@ -16,6 +16,7 @@ admin.site.register(models.Mouse)
 admin.site.register(models.Teclado)
 admin.site.register(models.Audifono)
 admin.site.register(models.Monitor)
+admin.site.register(models.Contacto)
 
 
 
